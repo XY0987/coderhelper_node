@@ -21,7 +21,7 @@ import { Interface } from './interface/interface.entity';
 import { Message } from './message/message.entity';
 import { Meeting } from './meeting/meeting.entity';
 import { MeetingUsers } from './meeting-users/meeting-users.entity';
-
+import { AuthModule } from './auth/auth.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -66,6 +66,7 @@ import { MeetingUsers } from './meeting-users/meeting-users.entity';
     CollectModule,
     MessageModule,
     MeetingUsersModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
