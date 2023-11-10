@@ -8,7 +8,7 @@ export class AuthService {
     private userService: UserService,
     private jwt: JwtService,
   ) {}
-  async signin(userName: string, password: string) {
+  async signin(userEmail: string, password: string) {
     return await this.jwt.signAsync({
       userName: 'XY',
       sub: 1,

@@ -22,6 +22,7 @@ import { Message } from './message/message.entity';
 import { Meeting } from './meeting/meeting.entity';
 import { MeetingUsers } from './meeting-users/meeting-users.entity';
 import { AuthModule } from './auth/auth.module';
+import { RedisModule } from './redis/redis.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -53,10 +54,11 @@ import { AuthModule } from './auth/auth.module';
           // 同步本地的schema与数据库==>初始化的时候去使用
           synchronize: true,
           // 设置日志等级
-          logging: true, //设置为true时开启全部日志
+          logging: ['error'], //设置为true时开启全部日志
         };
       },
     }),
+    RedisModule,
     UserModule,
     ProjectModule,
     WorkModule,
