@@ -11,23 +11,23 @@ export class User {
   userId: number;
 
   // 用户名
-  @Column({ unique: true })
+  @Column({ nullable: true })
   userName: string;
 
   // 用户邮箱
   @Column({ unique: true })
-  useEmail: string;
+  userEmail: string;
 
   // 用户密码
   @Column()
   userPassword: string;
 
   // 用户个性签名
-  @Column()
-  useSlogan: number;
+  @Column({ nullable: true })
+  useSlogan: string;
 
   // 用户头像
-  @Column()
+  @Column({ nullable: true })
   userImg: string;
 
   // 用户权限

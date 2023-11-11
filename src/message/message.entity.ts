@@ -11,7 +11,7 @@ export class Message {
   messageTitle: string;
 
   // 消息内容
-  @Column()
+  @Column({ nullable: true })
   messageContent: string;
 
   // 消息对应用户id

@@ -14,14 +14,36 @@ export class RedisService {
       port: configService.get('REDIS_PORT'), // Redis 服务器的端口
       password: configService.get('REDIS_PASSWORD'),
     });
-    console.log(this.redisClient);
   }
 
-  setValue(key: string, value: string) {
-    return this.redisClient.set(key, value);
+  async hSet(key, hashkey, hashval, timeNumber?: number) {
+    if (typeof hashval === 'object') {
+      hashval = JSON.stringify(hashval);
+    }
+    await this.redisClient.hmset(key, hashkey, hashval);
+    // 设置过期时间
+    if (timeNumber) {
+      await this.redisClient.expire(key, timeNumber);
+    }
   }
 
-  getValue(key: string) {
-    return this.redisClient.get(key);
+  async hGetAll(key) {
+    const promise = new Promise((resolve, reject) => {
+      this.redisClient.hgetall(key, function (err, val) {
+        if (err) {
+          reject(err);
+          return;
+        }
+        if (val == null) {
+          resolve(null);
+          return;
+        }
+        resolve(val);
+      });
+    });
+    return promise;
+  }
+  async hDel(key, hashkey) {
+    await this.redisClient.hdel(key, hashkey);
   }
 }

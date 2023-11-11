@@ -9,10 +9,9 @@ export class AuthService {
     private jwt: JwtService,
   ) {}
   async signin(userEmail: string, password: string) {
-    return await this.jwt.signAsync({
-      userName: 'XY',
-      sub: 1,
-    });
+    return await this.userService.signin(userEmail, password);
   }
-  signup(useName: string, password: string) {}
+  async signup(userEmail: string, password: string) {
+    return await this.userService.create(userEmail, password);
+  }
 }

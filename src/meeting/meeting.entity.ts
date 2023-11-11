@@ -7,11 +7,11 @@ export class Meeting {
   meetingId: number;
 
   // 会议主题
-  @Column()
+  @Column({ nullable: true })
   meetingTheme: string;
 
   // 会议内容
-  @Column()
+  @Column({ nullable: true })
   meetingContent: number;
 
   // 会议发出用户id
@@ -31,6 +31,6 @@ export class Meeting {
   meetingProjectId: number;
 
   // 会议总结
-  @Column()
+  @Column({ nullable: true })
   meetingRes: string;
 }

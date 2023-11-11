@@ -7,11 +7,13 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './auth.strategy';
 import { EmailService } from 'src/email/email.service';
+import { RedisModule } from 'src/redis/redis.module';
 
 @Module({
   imports: [
     UserModule,
     PassportModule,
+    RedisModule,
     // 注册jwt
     JwtModule.registerAsync({
       imports: [ConfigModule],
