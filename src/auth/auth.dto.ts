@@ -10,3 +10,9 @@ export class SignUpDto {
   code: number;
   password: string;
 }
+
+export class EditPasswordDto {
+  userEmail: string;
+  code: number;
+  password: string;
+}

@@ -28,4 +28,9 @@ export class UserService {
     const statement = `SELECT * FROM user WHERE userEmail=?;`;
     return this.userRepository.query(statement, [userEmail]);
   }
+
+  editPassword(userEmail: string, password: string) {
+    const statement = `UPDATE user SET userPassword=? WHERE userEmail=?;`;
+    return this.userRepository.query(statement, [password, userEmail]);
+  }
 }

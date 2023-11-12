@@ -1,12 +1,13 @@
 import { UserService } from './../user/user.service';
 import { RedisService } from './../redis/redis.service';
-import { ApiBody, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiQuery, ApiTags } from '@nestjs/swagger';
 import { EmailService } from './../email/email.service';
 import { AuthService } from './auth.service';
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
-import { SignInDto, SignUpDto } from './auth.dto';
+import { EditPasswordDto, SignInDto, SignUpDto } from './auth.dto';
 import { encipherPassword } from 'src/utils/md5Password';
 import { JwtService } from '@nestjs/jwt';
+import { getErrorResTo } from './error';
 
 @Controller('auth')
 @ApiTags('登录注册') // 分组
@@ -25,22 +26,14 @@ export class AuthController {
     const emailReg =
       /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
     if (!emailReg.test(userEmail)) {
-      return {
-        code: -10001,
-        info: '邮箱错误',
-        message: '请输入正确邮箱',
-      };
+      return getErrorResTo(-1001);
     }
     const res = await this.authService.signin(
       userEmail,
       encipherPassword(password),
     );
     if (res.length == 0) {
-      return {
-        code: -1004,
-        info: '账号或密码错误',
-        message: '账号或密码错误，请重新输入',
-      };
+      return getErrorResTo(-1004);
     }
     return {
       code: 200,
@@ -49,6 +42,7 @@ export class AuthController {
         userId: res[0].userId,
       }),
       info: '登录成功',
+      message: '登录成功',
     };
   }
 
@@ -59,11 +53,7 @@ export class AuthController {
     const emailReg =
       /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
     if (!emailReg.test(userEmail)) {
-      return {
-        code: -10001,
-        info: '邮箱错误',
-        message: '请输入正确邮箱',
-      };
+      return getErrorResTo(-1001);
     }
     // 判断验证码对不对
     const res = await this.redisService.hGetAll(
@@ -72,20 +62,12 @@ export class AuthController {
     console.log('res', res);
 
     if (!res || res[userEmail] != code || !code) {
-      return {
-        code: -10002,
-        info: '验证码错误',
-        message: '验证码错误或过期，请重新输入',
-      };
+      return getErrorResTo(-1002);
     }
     // 判断用户是否注册过
     const user = await this.userService.getUserInfoByEmail(userEmail);
     if (user.length > 0) {
-      return {
-        code: -10003,
-        info: '邮箱已注册过',
-        message: '您已注册过，请直接登录',
-      };
+      return getErrorResTo(-1003);
     }
     // 注册
     const creatRes = await this.authService.signup(
@@ -96,6 +78,7 @@ export class AuthController {
       code: 200,
       data: creatRes,
       info: '注册成功',
+      message: '注册成功',
     };
   }
   @Get('/getCode')
@@ -110,11 +93,7 @@ export class AuthController {
     const emailReg =
       /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
     if (!emailReg.test(userEmail)) {
-      return {
-        code: -10001,
-        info: '邮箱错误',
-        message: '请输入正确邮箱',
-      };
+      return getErrorResTo(-1001);
     }
     // 发送邮箱
     try {
@@ -125,11 +104,42 @@ export class AuthController {
       };
     } catch (error) {
       console.log(error);
-      return {
-        code: 500,
-        info: error,
-        message: '未知错误，请稍后重试',
-      };
+      return getErrorResTo(500, error);
     }
+  }
+
+  @Post('/editPassword')
+  async editPassword(@Body() dto: EditPasswordDto) {
+    const { userEmail, code, password } = dto;
+    const emailReg =
+      /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
+    if (!emailReg.test(userEmail)) {
+      return getErrorResTo(-1001);
+    }
+    // 判断验证码对不对
+    const res = await this.redisService.hGetAll(
+      `coderhelper-emailCode:${userEmail}`,
+    );
+    console.log('res', res);
+
+    if (!res || res[userEmail] != code || !code) {
+      return getErrorResTo(-1002);
+    }
+    // 判断用户是否注册过
+    const user = await this.userService.getUserInfoByEmail(userEmail);
+    if (user.length === 0) {
+      return getErrorResTo(-1005);
+    }
+    // 更改密码
+    const editPasswordRes = await this.userService.editPassword(
+      userEmail,
+      encipherPassword(password),
+    );
+    return {
+      code: 200,
+      info: '修改成功',
+      message: '修改成功',
+      data: editPasswordRes,
+    };
   }
 }
