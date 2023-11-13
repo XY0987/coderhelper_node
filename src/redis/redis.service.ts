@@ -24,9 +24,14 @@ export class RedisService {
     // 设置过期时间
     if (timeNumber) {
       await this.redisClient.expire(key, timeNumber);
+      this.redisClient.subscribe(key, () => {
+        console.log(' [i] Subscribed to "' + key + '" event channel : ');
+        this.redisClient.on('message', () => {
+          console.log('值过期了');
+        });
+      });
     }
   }
-
   async hGetAll(key) {
     const promise = new Promise((resolve, reject) => {
       this.redisClient.hgetall(key, function (err, val) {

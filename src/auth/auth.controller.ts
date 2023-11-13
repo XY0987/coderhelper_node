@@ -1,6 +1,6 @@
 import { UserService } from './../user/user.service';
 import { RedisService } from './../redis/redis.service';
-import { ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { EmailService } from './../email/email.service';
 import { AuthService } from './auth.service';
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
@@ -21,6 +21,7 @@ export class AuthController {
   ) {}
 
   @Post('/signin')
+  @ApiOperation({ summary: '登录' })
   async signin(@Body() dto: SignInDto) {
     const { userEmail, password } = dto;
     const emailReg =
@@ -48,6 +49,7 @@ export class AuthController {
 
   // 注册
   @Post('/signup')
+  @ApiOperation({ summary: '注册' })
   async signup(@Body() dto: SignUpDto) {
     const { userEmail, code, password } = dto;
     const emailReg =
@@ -82,6 +84,7 @@ export class AuthController {
     };
   }
   @Get('/getCode')
+  @ApiOperation({ summary: '获取验证码' })
   @ApiQuery({
     name: 'userEmail',
     type: 'string',
@@ -109,6 +112,7 @@ export class AuthController {
   }
 
   @Post('/editPassword')
+  @ApiOperation({ summary: '修改密码' })
   async editPassword(@Body() dto: EditPasswordDto) {
     const { userEmail, code, password } = dto;
     const emailReg =

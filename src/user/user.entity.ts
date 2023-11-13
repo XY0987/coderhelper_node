@@ -11,7 +11,7 @@ export class User {
   userId: number;
 
   // 用户名
-  @Column({ nullable: true })
+  @Column({ nullable: true, default: '未设置' })
   userName: string;
 
   // 用户邮箱
@@ -24,7 +24,7 @@ export class User {
 
   // 用户个性签名
   @Column({ nullable: true })
-  useSlogan: string;
+  userSlogan: string;
 
   // 用户头像
   @Column({ nullable: true })
@@ -32,5 +32,5 @@ export class User {
 
   // 用户权限
   @Column({ type: 'enum', enum: UserRole, default: UserRole.USER })
-  usePower: UserRole;
+  userPower: UserRole;
 }
