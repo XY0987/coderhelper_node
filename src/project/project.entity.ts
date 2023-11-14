@@ -20,10 +20,10 @@ export class Project {
 
   // 项目访问接口前缀
   @Column({ nullable: true })
-  projectBaseUrl: number;
+  projectBaseUrl: string;
 
   // 项目接口汇总
-  @Column({ nullable: true })
+  @Column('text', { nullable: true })
   projectApiOri: string;
 
   // 项目是否公开
@@ -35,6 +35,10 @@ export class Project {
   projectCollectNum: number;
 
   // 项目需求汇总
-  @Column({ nullable: true })
+  @Column('text', { nullable: true })
   projectDemand: string;
+
+  // 项目配置
+  @Column({ nullable: true })
+  projectConfig: string;
 }

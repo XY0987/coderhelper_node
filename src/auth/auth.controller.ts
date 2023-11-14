@@ -7,7 +7,7 @@ import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { EditPasswordDto, SignInDto, SignUpDto } from './auth.dto';
 import { encipherPassword } from 'src/utils/md5Password';
 import { JwtService } from '@nestjs/jwt';
-import { getErrorResTo } from './error';
+import { getErrorResTo } from '../error/authError';
 
 @Controller('auth')
 @ApiTags('登录注册') // 分组
