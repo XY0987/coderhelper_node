@@ -14,3 +14,19 @@ export class CreateProjectDto {
   @ApiProperty()
   projectDemand: string;
 }
+
+export class AddProjectConfig {
+  @ApiProperty()
+  projectId: number;
+  @ApiProperty()
+  config: string;
+  @ApiProperty()
+  projectBaseUrl: string;
+}
+
+export class AddProjectDemand {
+  @ApiProperty()
+  projectId: number;
+  @ApiProperty()
+  projectDemand: string;
+}
