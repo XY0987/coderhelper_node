@@ -227,7 +227,7 @@ export class ProjectController {
     );
     return {
       code: 200,
-      message: '查找成功',
+      message: '获取成功',
       data: {
         pagingRes,
         allTotals: allPagingRes.length,

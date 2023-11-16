@@ -23,6 +23,7 @@ import { Meeting } from './meeting/meeting.entity';
 import { MeetingUsers } from './meeting-users/meeting-users.entity';
 import { AuthModule } from './auth/auth.module';
 import { RedisModule } from './redis/redis.module';
+import { EventsGateway } from './events/events.gateway';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -71,6 +72,6 @@ import { RedisModule } from './redis/redis.module';
     AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, EventsGateway],
 })
 export class AppModule {}
