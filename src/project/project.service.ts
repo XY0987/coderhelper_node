@@ -222,6 +222,12 @@ export class ProjectService {
     return this.projectRepository.query(statement, [projectId]);
   }
 
+  // 获取项目中的所有接口
+  getAllInterface(projectId: number) {
+    const statement = `SELECT * FROM interface WHERE interfaceProjectId=?;`;
+    return this.projectRepository.query(statement, [projectId]);
+  }
+
   updateProjectApiOri(
     projectId: number,
     projectApiOri: string,

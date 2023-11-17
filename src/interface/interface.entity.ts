@@ -35,9 +35,12 @@ export class Interface {
 
   // 接口状态
   @Column({ nullable: true })
-  interfaceStatus: string;
+  interfaceStatus: number;
 
   // 单个接口说明文档
   @Column({ nullable: true })
   interfaceDocs: string;
+
+  @Column({ nullable: true })
+  interfaceConfig: string;
 }

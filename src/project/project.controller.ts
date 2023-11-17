@@ -420,7 +420,7 @@ export class ProjectController {
   }
 
   @Get('/getProjectInfo')
-  @ApiOperation({ summary: '获取项目的具体信息(目前缺少接口信息)' })
+  @ApiOperation({ summary: '获取项目的具体信息)' })
   @ApiQuery({
     name: 'projectId',
     type: 'number',
@@ -436,11 +436,13 @@ export class ProjectController {
       userId,
     );
     const res = await this.projectService.getProjectInfo(projectId);
+    const interfaceRes = await this.projectService.getAllInterface(projectId);
     return {
       code: 200,
       message: '获取成功',
       data: res[0],
-      userData: userRes[0],
+      userData: userRes,
+      interfaceRes,
     };
   }
 
