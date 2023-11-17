@@ -118,6 +118,105 @@ export class ProjectService {
     return this.projectRepository.query(statement, arr);
   }
 
+  // 分页查找公开项目
+  getPublicProject(beginIndex: number, size: number) {
+    const statement = `SELECT
+    project.projectId projectId,
+    project.projectName projectName,
+    project.projectIsPub projectIsPub,
+    project.projectDesc projectDesc,
+    project.projectApiUrl projectApiUrl,
+    project.projectCollectNum projectCollectNum,
+    project.projectConfig projectConfig,
+    project.projectBaseUrl projectBaseUrl 
+  FROM
+    project 
+  WHERE
+    projectIsPub = 1 
+    LIMIT ? OFFSET ?;`;
+    return this.projectRepository.query(statement, [
+      Number(size),
+      (beginIndex - 1) * size,
+    ]);
+  }
+
+  // 获取公开项目的所有
+  getAllPublicProject() {
+    const statement = `SELECT
+    * 
+  FROM
+    project 
+  WHERE
+    project.projectIsPub = 1;`;
+    return this.projectRepository.query(statement);
+  }
+
+  // 分页查询收藏的项目
+  getCollectProject(beginIndex: number, size: number, userId: number) {
+    const statement = `SELECT
+    project.projectId projectId,
+    project.projectName projectName,
+    project.projectIsPub projectIsPub,
+    project.projectDesc projectDesc,
+    project.projectApiUrl projectApiUrl,
+    project.projectCollectNum projectCollectNum,
+    project.projectConfig projectConfig,
+    project.projectBaseUrl projectBaseUrl  
+  FROM
+    collect
+    LEFT JOIN project ON collect.collectProjectId = project.projectId 
+  WHERE 
+    collectUserId =? 
+    LIMIT ? OFFSET ?;`;
+    return this.projectRepository.query(statement, [
+      userId,
+      Number(size),
+      (beginIndex - 1) * size,
+    ]);
+  }
+
+  // 获取收藏的所有项目
+  getAllCollectProject(userId: number) {
+    const statement = `SELECT
+    *
+  FROM
+    collect
+    LEFT JOIN project ON collect.collectProjectId = project.projectId 
+  WHERE 
+    collectUserId =?;`;
+    return this.projectRepository.query(statement, [userId]);
+  }
+
+  // 查找项目是否被收藏过
+  getProjectIsCollect(projectId: number, userId: number) {
+    const statement = `SELECT
+    * 
+  FROM
+    collect 
+  WHERE
+    collect.collectProjectId =? 
+    AND collect.collectUserId =?;
+  `;
+    return this.projectRepository.query(statement, [projectId, userId]);
+  }
+
+  // 收藏项目
+  collectProject(projectId: number, userId: number) {
+    const statement = `INSERT INTO collect ( collectProjectId, collectUserId )
+    VALUES
+      (?,?);`;
+    return this.projectRepository.query(statement, [projectId, userId]);
+  }
+
+  // 取消收藏项目
+  delCollectProject(projectId: number, userId: number) {
+    const statement = `DELETE FROM collect 
+    WHERE
+      collect.collectProjectId =? 
+      AND collect.collectUserId =?;`;
+    return this.projectRepository.query(statement, [Number(projectId), userId]);
+  }
+
   getProjectInfo(projectId: number) {
     const statement = `SELECT * FROM project WHERE projectId=?;`;
     return this.projectRepository.query(statement, [projectId]);

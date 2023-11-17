@@ -1,5 +1,5 @@
 // project 错误状态码以-2开头
-type codeEnum = -2001 | -2002 | -2003 | -2004 | 500;
+type codeEnum = -2001 | -2002 | -2003 | -2004 | -2005 | 500;
 export const getErrResProject = (code: codeEnum, err?: any) => {
   switch (code) {
     case -2001:
@@ -25,6 +25,12 @@ export const getErrResProject = (code: codeEnum, err?: any) => {
         code,
         info: '将自己从项目中删除',
         message: '您不能删除自己',
+      };
+    case -2005:
+      return {
+        code,
+        info: '已经收藏过',
+        message: '您已经收藏过该项目,请勿重复收藏',
       };
     default:
       return {

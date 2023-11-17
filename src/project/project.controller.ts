@@ -420,7 +420,7 @@ export class ProjectController {
   }
 
   @Get('/getProjectInfo')
-  @ApiOperation({ summary: '获取项目的具体信息' })
+  @ApiOperation({ summary: '获取项目的具体信息(目前缺少接口信息)' })
   @ApiQuery({
     name: 'projectId',
     type: 'number',
@@ -452,6 +452,117 @@ export class ProjectController {
     return {
       code: 200,
       message: '获取成功',
+      data: res,
+    };
+  }
+
+  @Get('/getPublicProject')
+  @ApiOperation({ summary: '分页查看公开项目，缺少是否收藏信息' })
+  @ApiQuery({
+    name: 'beginIndex',
+    type: 'number',
+    description: '页数',
+  })
+  @ApiQuery({
+    name: 'size',
+    type: 'number',
+    description: '每页条数',
+  })
+  async getPublicProject(
+    @Query() { beginIndex, size }: { beginIndex: number; size: number },
+  ) {
+    const pagingRes = await this.projectService.getPublicProject(
+      beginIndex,
+      size,
+    );
+    const allPagingRes = await this.projectService.getAllPublicProject();
+    return {
+      code: 200,
+      message: '获取成功',
+      data: {
+        pagingRes,
+        allTotals: allPagingRes.length,
+      },
+    };
+  }
+
+  // 收藏项目
+  @Get('/collectProject')
+  @ApiOperation({ summary: '收藏项目' })
+  @ApiQuery({
+    name: 'projectId',
+    type: 'number',
+    description: '项目id',
+  })
+  async collectProject(
+    @Query() { projectId }: { projectId: number },
+    @Req() req,
+  ) {
+    const userId = req.user.userId;
+    const isCollectReg = await this.projectService.getProjectIsCollect(
+      projectId,
+      userId,
+    );
+    if (isCollectReg.length > 0) {
+      return getErrResProject(-2005);
+    }
+    const res = await this.projectService.collectProject(projectId, userId);
+    return {
+      code: 200,
+      data: res,
+      message: '收藏成功',
+    };
+  }
+
+  @Get('/getCollectProject')
+  @ApiOperation({ summary: '分页查询当前用户收藏项目' })
+  @ApiQuery({
+    name: 'beginIndex',
+    type: 'number',
+    description: '页数',
+  })
+  @ApiQuery({
+    name: 'size',
+    type: 'number',
+    description: '每页条数',
+  })
+  async getCollectProject(
+    @Query() { beginIndex, size }: { beginIndex: number; size: number },
+    @Req() req,
+  ) {
+    const userId = req.user.userId;
+    const pagingRes = await this.projectService.getCollectProject(
+      beginIndex,
+      size,
+      userId,
+    );
+    const allPagingRes = await this.projectService.getAllCollectProject(userId);
+    return {
+      code: 200,
+      message: '获取成功',
+      data: {
+        pagingRes,
+        allTotals: allPagingRes.length,
+      },
+    };
+  }
+
+  @Delete('/delCollectProject')
+  @ApiOperation({ summary: '取消收藏项目' })
+  @ApiQuery({
+    name: 'projectId',
+    type: 'number',
+    description: '项目id',
+  })
+  async delCollectProject(
+    @Query() { projectId }: { projectId: number },
+    @Req() req,
+  ) {
+    const userId = req.user.userId;
+    const res = await this.projectService.delCollectProject(projectId, userId);
+    return {
+      code: 200,
+      message: '删除成功',
       data: res,
     };
   }
