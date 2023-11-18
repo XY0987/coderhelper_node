@@ -11,7 +11,8 @@ export class InterfaceService {
   ) {}
   // 获取项目的所有接口
   getAllInterface(projectId) {
-    const statement = `SELECT * FROM interface WHERE interfaceProjectId=?;`;
+    const statement = `SELECT * FROM interface LEFT JOIN \`user\` ON \`user\`.userId=interface.interfaceDutyUser 
+    WHERE interfaceProjectId=?;`;
     return this.interfaceRepository.query(statement, [projectId]);
   }
 
@@ -62,5 +63,71 @@ WHERE
       interfaceName,
       interfaceType,
     ]);
+  }
+
+  // 删除接口
+  delInterface(interfaceId: number) {
+    const statement = `DELETE FROM interface WHERE interfaceId=?;`;
+    return this.interfaceRepository.query(statement, [interfaceId]);
+  }
+
+  // 修改接口
+  editInterface(
+    interfaceId: number,
+    interfaceName?: string,
+    interfaceType?: string,
+    interfaceData?: string,
+    interfaceRes?: string,
+    interfaceDutyUser?: number,
+    interfaceStatus?: number,
+    interfaceDocs?: string,
+    interfaceConfig?: string,
+  ) {
+    const arr = [];
+    let str = ``;
+    if (interfaceName) {
+      str += `interfaceName=?,`;
+      arr.push(interfaceName);
+    }
+    if (interfaceType) {
+      str += `interfaceType=?,`;
+      arr.push(interfaceType);
+    }
+    if (interfaceData) {
+      str += `interfaceData=?,`;
+      arr.push(interfaceData);
+    }
+    if (interfaceRes) {
+      str += `interfaceRes=?,`;
+      arr.push(interfaceRes);
+    }
+    if (interfaceDutyUser) {
+      str += `interfaceDutyUser=?,`;
+      arr.push(interfaceDutyUser);
+    }
+    if (interfaceStatus || interfaceStatus == 0 || interfaceStatus == 1) {
+      str += `interfaceStatus=?,`;
+      arr.push(interfaceStatus);
+    }
+    if (interfaceDocs) {
+      str += `interfaceDocs=?,`;
+      arr.push(interfaceDocs);
+    }
+    if (interfaceConfig) {
+      str += `interfaceConfig=?,`;
+      arr.push(interfaceConfig);
+    }
+    if (str.length > 0) {
+      str = str.substring(0, str.length - 1);
+    }
+    arr.push(interfaceId);
+    const statement = `UPDATE interface SET ${str} WHERE interfaceId=?;`;
+    return this.interfaceRepository.query(statement, arr);
+  }
+
+  // 通过接口id查找接口信息
+  getInterfaceById(interfaceId: number) {
+    const statement = `SELECT * FROM interface LEFT JOIN \`user\` ON interface.interfaceDutyUser=\`user\`.userId WHERE interfaceId=?;`;
+    return this.interfaceRepository.query(statement, [interfaceId]);
   }
 }
