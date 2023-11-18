@@ -6,6 +6,10 @@ export class Work {
   @PrimaryGeneratedColumn()
   workId: number;
 
+  // 任务对应项目id
+  @Column()
+  workProjectId: number;
+
   // 任务名称
   @Column()
   workName: string;
@@ -28,7 +32,7 @@ export class Work {
 
   // 任务状态
   @Column()
-  workStatus: string;
+  workStatus: number;
 
   // 任务提出人id
   @Column()
@@ -36,9 +40,9 @@ export class Work {
 
   // 任务紧急程度
   @Column()
-  workVexation: string;
+  workVexation: number;
 
   // 任务类型
   @Column()
-  workType: string;
+  workType: number;
 }
