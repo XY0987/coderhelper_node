@@ -12,7 +12,7 @@ export class Meeting {
 
   // 会议内容
   @Column({ nullable: true })
-  meetingContent: number;
+  meetingContent: string;
 
   // 会议发出用户id
   @Column()
