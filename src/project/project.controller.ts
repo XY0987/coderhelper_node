@@ -568,4 +568,32 @@ export class ProjectController {
       data: res,
     };
   }
+
+  // 获取单个项目收藏信息
+  @Get('/getProjectCollectInfo')
+  @ApiOperation({ summary: '获取当前登录用户的项目的收藏信息' })
+  @ApiQuery({
+    name: 'projectId',
+    type: 'number',
+    description: '项目id',
+  })
+  async getProjectCollectInfo(
+    @Query() { projectId }: { projectId: number },
+    @Req() req,
+  ) {
+    const userId = req.user.userId;
+    const userIsCollectRes = await this.projectService.getCollectProjectInfo(
+      projectId,
+      userId,
+    );
+    const allCollectInfo =
+      await this.projectService.getProjectAllCollectInfo(projectId);
+    return {
+      code: 200,
+      data: {
+        isCollect: userIsCollectRes.length > 0,
+        collectNum: allCollectInfo.length,
+      },
+    };
+  }
 }

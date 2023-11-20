@@ -12,7 +12,6 @@ export class UserController {
   @ApiOperation({ summary: '获取用户信息' })
   @UseGuards(AuthGuard('jwt'))
   async getUserInfo(@Req() req: any) {
-    console.log(req.user);
     const userId = req.user.userId;
     const res = await this.userService.getUserInfoById(userId);
     return {

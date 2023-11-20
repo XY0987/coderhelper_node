@@ -245,4 +245,25 @@ export class ProjectService {
     const statement = `DELETE  FROM project WHERE projectId=?;`;
     return this.projectRepository.query(statement, [projectId]);
   }
+
+  getCollectProjectInfo(projectId: number, userId: number) {
+    const statement = `SELECT
+    * 
+  FROM
+    collect 
+  WHERE
+    collectUserId =? 
+    AND collectProjectId =?;`;
+    return this.projectRepository.query(statement, [userId, projectId]);
+  }
+
+  getProjectAllCollectInfo(projectId: number) {
+    const statement = `SELECT
+    * 
+  FROM
+    collect 
+  WHERE
+    collectProjectId =?;`;
+    return this.projectRepository.query(statement, [projectId]);
+  }
 }
