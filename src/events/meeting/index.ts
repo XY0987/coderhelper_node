@@ -1,3 +1,8 @@
+/* 
+这里使用的是全局的，而不是类内部的
+因为使用类内部的每次连接的时候都会new一个meetingWs实例
+每次new又会创建一个新的userMap
+*/
 const userMap = new Map();
 export class MeetingWs {
   roomKey: string;
