@@ -29,4 +29,8 @@ export class Message {
   // 消息对应项目id
   @Column()
   messageProjectId: number;
+
+  // 是否已读
+  @Column()
+  messageIsRead: boolean;
 }
