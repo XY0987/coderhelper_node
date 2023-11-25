@@ -1,6 +1,8 @@
+import { MessageService } from './../message/message.service';
 import { RedisService } from './../redis/redis.service';
 import { SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
 import { MeetingWs } from './meeting';
+import { MessageWs } from './message';
 
 @WebSocketGateway(18080, {
   cors: {
@@ -11,7 +13,11 @@ export class EventsGateway {
   userMap: Map<any, any>;
   roomKey: string;
   meetingWs: MeetingWs;
-  constructor(private redisService: RedisService) {
+  messageWs: MessageWs;
+  constructor(
+    private redisService: RedisService,
+    private messageService: MessageService,
+  ) {
     this.userMap = new Map();
     this.roomKey = 'meeting-room::';
   }
@@ -24,5 +30,6 @@ export class EventsGateway {
   @SubscribeMessage('connection')
   handleConnection(client: any) {
     this.meetingWs = new MeetingWs(this.redisService, client);
+    this.messageWs = new MessageWs(this.messageService, client);
   }
 }

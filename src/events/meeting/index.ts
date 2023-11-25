@@ -75,6 +75,9 @@ export class MeetingWs {
     let url = s.client.request.url;
     let userId = this.getParams(url, 'userId');
     let roomId = this.getParams(url, 'roomId');
+    if (!roomId) {
+      return;
+    }
     let nickname = this.getParams(url, 'nickname');
     let pub = this.getParams(url, 'pub');
     userMap.set(userId, s);

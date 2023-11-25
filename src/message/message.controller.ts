@@ -83,8 +83,23 @@ export class MessageController {
     return {
       code: 200,
       message: '获取成功',
-      data: res,
-      total: res.length,
+      data: {
+        pagingRes: res,
+        allTotals: res.length,
+      },
+    };
+  }
+  @Get('/setReadMessage')
+  @ApiOperation({ summary: '将当前用户指定类型消息设置为已读' })
+  async setReadMessage(
+    @Query() { messageType }: { messageType: number },
+    @Req() req,
+  ) {
+    const userId = req.user.userId;
+    const setIsRead = await this.messageService.setIsRead(userId, messageType);
+    return {
+      code: 200,
+      data: setIsRead,
     };
   }
 }

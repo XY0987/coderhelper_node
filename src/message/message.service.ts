@@ -57,4 +57,10 @@ export class MessageService {
      message.messageUserId=?${str};`;
     return this.messageRepository.query(statement, arr);
   }
+
+  // 将用户的指定类型设置为已读
+  setIsRead(userId: number, messageType: number) {
+    const statement = `UPDATE message SET messageIsRead=1 WHERE messageToUserId=? AND messageType=?;`;
+    return this.messageRepository.query(statement, [userId, messageType]);
+  }
 }
