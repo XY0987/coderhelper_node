@@ -19,7 +19,7 @@ import { getErrResWork } from 'src/error/workError';
 
 @Controller('work')
 @UseGuards(AuthGuard('jwt'))
-@ApiTags('任务(未加入消息提醒功能)')
+@ApiTags('任务')
 export class WorkController {
   constructor(
     private workService: WorkService,

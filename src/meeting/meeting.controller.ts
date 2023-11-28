@@ -19,7 +19,7 @@ import { MessageController } from 'src/message/message.controller';
 
 @Controller('meeting')
 @UseGuards(AuthGuard('jwt'))
-@ApiTags('会议(未加入监听键值过期提醒)')
+@ApiTags('会议')
 export class MeetingController {
   constructor(
     private meetingService: MeetingService,
