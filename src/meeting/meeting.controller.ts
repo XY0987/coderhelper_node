@@ -1,3 +1,4 @@
+import { MessageService } from 'src/message/message.service';
 import { MeetingUsersService } from './../meeting-users/meeting-users.service';
 import { MeetingService } from './meeting.service';
 import {
@@ -13,14 +14,16 @@ import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { AddSummarizeDto, CreateMeetingDto } from './meeting.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { getErrResMeeting } from 'src/error/meetingError';
+import { MessageController } from 'src/message/message.controller';
 
 @Controller('meeting')
 @UseGuards(AuthGuard('jwt'))
-@ApiTags('会议(未加入消息提醒)')
+@ApiTags('会议(未加入监听键值过期提醒)')
 export class MeetingController {
   constructor(
     private meetingService: MeetingService,
     private meetingUsersService: MeetingUsersService,
+    private messageService: MessageService,
   ) {}
 
   @Post('/create')
@@ -71,14 +74,35 @@ export class MeetingController {
       meetingId: number;
       meetingToUserId: number;
     },
+    @Req() req,
   ) {
-    const res = await this.meetingUsersService.create(
+    const userId = req.user.userId;
+    // 查询信息
+    const meetingInfo: any[] = await this.meetingService.getMeetingByuserId(
       meetingId,
-      meetingToUserId,
+      userId,
     );
+    // 加入消息
+    this.messageService.create(
+      meetingInfo[0].meetingTheme,
+      JSON.stringify({
+        content: meetingInfo[0].meetingContent,
+        meetingStartTime: meetingInfo[0].meetingStartTime,
+      }),
+      meetingToUserId,
+      2,
+      meetingInfo[0].meetingUserId,
+      meetingInfo[0].meetingProjectId,
+    );
+    // 添加过期提醒
+
+    // const res = await this.meetingUsersService.create(
+    //   meetingId,
+    //   meetingToUserId,
+    // );
     return {
       code: 200,
-      data: res,
+      data: meetingInfo,
     };
   }
 

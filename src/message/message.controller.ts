@@ -11,10 +11,11 @@ import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { CreateMessageDto } from './message.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { MessageService } from './message.service';
+import { MessageWs, allUserMap } from 'src/events/message';
 
 @Controller('message')
 @UseGuards(AuthGuard('jwt'))
-@ApiTags('消息(未加入在线用户消息提醒功能)')
+@ApiTags('消息')
 export class MessageController {
   constructor(private messageService: MessageService) {}
 
@@ -31,7 +32,9 @@ export class MessageController {
     } = dto;
     const res = await this.messageService.create(
       messageTitle,
-      messageContent,
+      JSON.stringify({
+        content: messageContent,
+      }),
       messageToUserId,
       messageType,
       userId,

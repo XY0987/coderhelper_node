@@ -3,7 +3,7 @@ import { MessageService } from 'src/message/message.service';
 /* 
 处理消息发送，如果用户在线则直接发送，存储到数据库中
 */
-const allUserMap = new Map();
+export const allUserMap = new Map();
 export class MessageWs {
   messageService: MessageService;
   constructor(messageService: any, ws: any) {
@@ -14,6 +14,7 @@ export class MessageWs {
     let url = ws.client.request.url;
     let userId = this.getParams(url, 'userId');
     allUserMap.set(userId, ws);
+    // 收到信息，发送给指定用户
     ws.on('getMessageClient', (data) => {
       // 收到消息
       const {
@@ -53,5 +54,12 @@ export class MessageWs {
       }
     }
     return null;
+  }
+  sendMessage(id: number, data: string) {
+    const ws = allUserMap.get(`${id}`);
+    if (ws) {
+      // 发送消息
+      ws.emit('sendMessageServer', data);
+    }
   }
 }

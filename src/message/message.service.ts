@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Message } from './message.entity';
 import { Repository } from 'typeorm';
+import { allUserMap } from 'src/events/message';
 
 @Injectable()
 export class MessageService {
@@ -18,6 +19,20 @@ export class MessageService {
     messageUserId: number,
     messageProjectId: number,
   ) {
+    // 加入消息提醒
+    const ws = allUserMap.get(`${messageToUserId}`);
+    if (ws) {
+      ws.emit(
+        'sendMessageServer',
+        JSON.stringify({
+          messageTitle,
+          messageContent,
+          messageToUserId,
+          messageType,
+          messageProjectId,
+        }),
+      );
+    }
     const statement = `INSERT INTO message ( messageTitle, messageContent, messageToUserId, messageType, messageUserId, messageProjectId, messageIsRead )
     VALUES
         (?,?,?,?,?,?,?);`;
