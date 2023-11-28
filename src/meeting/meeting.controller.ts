@@ -1,3 +1,4 @@
+import { RedisService } from 'src/redis/redis.service';
 import { MessageService } from 'src/message/message.service';
 import { MeetingUsersService } from './../meeting-users/meeting-users.service';
 import { MeetingService } from './meeting.service';
@@ -24,6 +25,7 @@ export class MeetingController {
     private meetingService: MeetingService,
     private meetingUsersService: MeetingUsersService,
     private messageService: MessageService,
+    private redisService: RedisService,
   ) {}
 
   @Post('/create')
@@ -94,15 +96,32 @@ export class MeetingController {
       meetingInfo[0].meetingUserId,
       meetingInfo[0].meetingProjectId,
     );
-    // 添加过期提醒
+    const time = Date.parse(meetingInfo[0].meetingStartTime) - Date.now();
 
-    // const res = await this.meetingUsersService.create(
-    //   meetingId,
-    //   meetingToUserId,
-    // );
+    // 添加过期提醒
+    this.redisService.hSet(
+      `meeting-info::${meetingId}-${userId}`,
+      `${meetingId}-${userId}`,
+      JSON.stringify({
+        messageTitle: meetingInfo[0].meetingTheme,
+        messageContent: JSON.stringify({
+          content: meetingInfo[0].meetingContent,
+          meetingStartTime: meetingInfo[0].meetingStartTime,
+        }),
+        messageToUserId: meetingToUserId,
+        messageType: 2,
+        messageUserId: meetingInfo[0].meetingUserId,
+        messageProjectId: meetingInfo[0].meetingProjectId,
+      }),
+      parseInt(`${time / 1000}`),
+    );
+    const res = await this.meetingUsersService.create(
+      meetingId,
+      meetingToUserId,
+    );
     return {
       code: 200,
-      data: meetingInfo,
+      data: res,
     };
   }
 

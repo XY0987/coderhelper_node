@@ -146,4 +146,10 @@ export class AuthController {
       data: editPasswordRes,
     };
   }
+
+  @Get('/test')
+  async setKey(@Query() { time }: { time: number }) {
+    this.redisService.hSet('key', 'bar', 'EX', time);
+    return {};
+  }
 }

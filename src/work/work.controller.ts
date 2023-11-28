@@ -1,3 +1,5 @@
+import { RedisService } from 'src/redis/redis.service';
+import { MessageService } from 'src/message/message.service';
 import { GroupService } from './../group/group.service';
 import { WorkService } from './work.service';
 import {
@@ -22,6 +24,8 @@ export class WorkController {
   constructor(
     private workService: WorkService,
     private groupService: GroupService,
+    private messageService: MessageService,
+    private redisService: RedisService,
   ) {}
 
   @Post('/create')
@@ -46,7 +50,22 @@ export class WorkController {
     if (groupRes.length == 0) {
       return getErrResWork(-4001);
     }
+    // 发布消息
+    this.messageService.create(
+      workName,
+      JSON.stringify({
+        content: workDesc,
+        workVexation: workVexation,
+        workType: workType,
+        workEndTime: workEndTime,
+      }),
+      workUserId,
+      0,
+      userId,
+      workProjectId,
+    );
     // 消息提醒(存入redis)
+    const time = Date.parse(workEndTime) - Date.now();
     // 创建任务
     const res = await this.workService.create(
       workProjectId,
@@ -59,6 +78,24 @@ export class WorkController {
       userId,
       workVexation,
       workType,
+    );
+    this.redisService.hSet(
+      `work-info::${res.insertId}`,
+      res.insertId,
+      JSON.stringify({
+        messageTitle: workName,
+        messageContent: JSON.stringify({
+          content: workDesc,
+          workVexation: workVexation,
+          workType: workType,
+          workEndTime: workEndTime,
+        }),
+        messageToUserId: workUserId,
+        messageType: 0,
+        messageUserId: userId,
+        messageProjectId: workProjectId,
+      }),
+      parseInt(`${time / 1000}`),
     );
     return {
       code: 200,

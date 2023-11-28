@@ -3,7 +3,8 @@ import { ConfigService } from '@nestjs/config';
 
 import { Injectable } from '@nestjs/common';
 import Redis from 'ioredis';
-
+import { allUserMap } from 'src/events/message';
+let yn = false;
 @Injectable()
 export class RedisService {
   private readonly redisClient: Redis;
@@ -20,28 +21,44 @@ export class RedisService {
       port: configService.get('REDIS_PORT'), // Redis 服务器的端口
       password: configService.get('REDIS_PASSWORD'),
     });
-    this.subscribe();
+    if (!yn) {
+      this.subscribe();
+    }
+    yn = true;
   }
 
   subscribe() {
-    this.subRedisClient.psubscribe('__keyevent@0__:expired');
-    this.subRedisClient.on('pmessage', (pattern, channel, message) => {
-      console.log(message, '值过期了');
+    this.subRedisClient.config('SET', 'notify-keyspace-events', 'Ex');
+    this.subRedisClient.subscribe('__keyevent@0__:expired');
+    this.subRedisClient.on('message', async (channel, message) => {
+      const res: Object = await this.hGetAll(`${message}-copy`);
+      console.log('键值过期了', message);
+      console.log(res);
+      let key = Object.keys(res)[0];
+      // 删除对应键
+      await this.hDel(`${message}-copy`, key);
+      // 加入消息提醒
+      const { messageToUserId } = JSON.parse(res[key]);
+      const ws = allUserMap.get(String(messageToUserId));
+      if (ws) {
+        ws.emit('sendMessageServer', res[key]);
+      }
     });
   }
 
   async hSet(key, hashkey, hashval, timeNumber?: number) {
+    // if (timeNumber && timeNumber < 0) {
+    //   return;
+    // }
     if (typeof hashval === 'object') {
       hashval = JSON.stringify(hashval);
     }
     await this.redisClient.hmset(key, hashkey, hashval);
+    // 赋值值，用于过期是获取
+    await this.redisClient.hmset(`${key}-copy`, hashkey, hashval);
     // 设置过期时间
     if (timeNumber) {
       await this.redisClient.expire(key, timeNumber);
-      // this.redisClient.subscribe(key, () => {
-      //   console.log(' [i] Subscribed to "' + key + '" event channel : ');
-
-      // });
     }
   }
   async hGetAll(key) {
