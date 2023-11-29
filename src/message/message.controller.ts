@@ -99,6 +99,11 @@ export class MessageController {
   }
   @Get('/setReadMessage')
   @ApiOperation({ summary: '将当前用户指定类型消息设置为已读' })
+  @ApiQuery({
+    name: 'messageType',
+    type: 'number',
+    description: '消息类型',
+  })
   async setReadMessage(
     @Query() { messageType }: { messageType: number },
     @Req() req,
