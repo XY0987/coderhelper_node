@@ -148,8 +148,22 @@ export class AuthController {
   }
 
   @Get('/test')
+  @ApiOperation({ summary: '测试监听键值过期' })
+  @ApiQuery({
+    name: 'time',
+    type: 'number',
+    description: '测试监听键值过期，在time秒后进行消息提醒',
+  })
   async setKey(@Query() { time }: { time: number }) {
-    this.redisService.hSet('key', 'bar', 'EX', time);
-    return {};
+    this.redisService.hSet(
+      'key',
+      'bar',
+      '{"messageTitle":"消息主题","messageContent":"{\\"content\\":\\"消息内容\\",\\"workVexation\\":0,\\"workType\\":0,\\"workEndTime\\":\\"2023-11-29 08:00:11\\"}","messageToUserId":3,"messageType":0,"messageUserId":3,"messageProjectId":7}',
+      time,
+    );
+    return {
+      code: 200,
+      message: '添加成功',
+    };
   }
 }

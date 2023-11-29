@@ -11,14 +11,19 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 import { AddSummarizeDto, CreateMeetingDto } from './meeting.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { getErrResMeeting } from 'src/error/meetingError';
-import { MessageController } from 'src/message/message.controller';
 
 @Controller('meeting')
 @UseGuards(AuthGuard('jwt'))
+@ApiBearerAuth()
 @ApiTags('会议')
 export class MeetingController {
   constructor(

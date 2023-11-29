@@ -7,14 +7,19 @@ import {
   Get,
   Query,
 } from '@nestjs/common';
-import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 import { CreateMessageDto } from './message.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { MessageService } from './message.service';
-import { MessageWs, allUserMap } from 'src/events/message';
 
 @Controller('message')
 @UseGuards(AuthGuard('jwt'))
+@ApiBearerAuth()
 @ApiTags('消息')
 export class MessageController {
   constructor(private messageService: MessageService) {}
@@ -61,7 +66,7 @@ export class MessageController {
   @ApiQuery({
     name: 'messageIsRead',
     type: 'boolean',
-    description: '是否阅读(0表示维未读，1表示已读)',
+    description: '是否阅读(0表示未读，1表示已读)',
   })
   async getMessage(
     @Query()

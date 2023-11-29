@@ -19,12 +19,18 @@ import {
   CreateProjectDto,
 } from './project.dto';
 import axios from 'axios';
-import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 import { getErrResProject } from 'src/error/projectError';
 import { getErrorResTo } from 'src/error/authError';
 
 @Controller('project')
 @UseGuards(AuthGuard('jwt'))
+@ApiBearerAuth()
 @ApiTags('项目')
 export class ProjectController {
   constructor(

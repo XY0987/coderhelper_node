@@ -12,13 +12,19 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 import { AddInterfaceDto, EditInterfaceDto } from './interface.dto';
 import { getErrResProject } from 'src/error/projectError';
 import { getErrResInterface } from 'src/error/interfaceError';
 
 @Controller('interface')
 @UseGuards(AuthGuard('jwt'))
+@ApiBearerAuth()
 @ApiTags('接口')
 export class InterfaceController {
   constructor(

@@ -5,6 +5,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const options = new DocumentBuilder()
+    .addBearerAuth()
     .setTitle('接口文档')
     .setDescription(
       `描述信息:

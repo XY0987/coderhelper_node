@@ -13,12 +13,18 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 import { CreateWorkDto, EditWorkDto } from './work.dto';
 import { getErrResWork } from 'src/error/workError';
 
 @Controller('work')
 @UseGuards(AuthGuard('jwt'))
+@ApiBearerAuth()
 @ApiTags('任务')
 export class WorkController {
   constructor(
