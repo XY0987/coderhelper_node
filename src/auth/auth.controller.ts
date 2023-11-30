@@ -3,11 +3,21 @@ import { RedisService } from './../redis/redis.service';
 import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { EmailService } from './../email/email.service';
 import { AuthService } from './auth.service';
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Header,
+  Post,
+  Query,
+  StreamableFile,
+} from '@nestjs/common';
 import { EditPasswordDto, SignInDto, SignUpDto } from './auth.dto';
 import { encipherPassword } from 'src/utils/md5Password';
 import { JwtService } from '@nestjs/jwt';
 import { getErrorResTo } from '../error/authError';
+import { createReadStream } from 'fs';
+import { join } from 'path';
 
 @Controller('auth')
 @ApiTags('登录注册') // 分组
@@ -165,5 +175,12 @@ export class AuthController {
       code: 200,
       message: '添加成功',
     };
+  }
+  @Get('/file')
+  @Header('Content-Type', 'application/json')
+  @Header('Content-Disposition', 'attachment; filename="reqct.d.ts"')
+  getFile() {
+    const file = createReadStream(join(process.cwd(), './src/file/react.d.ts'));
+    return new StreamableFile(file);
   }
 }
