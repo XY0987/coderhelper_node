@@ -38,11 +38,13 @@ export class RedisService {
       // 删除对应键
       await this.hDel(`${message}-copy`, key);
       // 加入消息提醒
-      const { messageToUserId } = JSON.parse(res[key]);
-      const ws = allUserMap.get(String(messageToUserId));
-      if (ws) {
-        ws.emit('sendMessageServer', res[key]);
-      }
+      try {
+        const { messageToUserId } = JSON.parse(res[key]);
+        const ws = allUserMap.get(String(messageToUserId));
+        if (ws) {
+          ws.emit('sendMessageServer', res[key]);
+        }
+      } catch (error) {}
     });
   }
 
