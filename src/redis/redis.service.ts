@@ -15,11 +15,13 @@ export class RedisService {
       host: configService.get('REDIS_HOST'), // Redis 服务器的主机名
       port: configService.get('REDIS_PORT'), // Redis 服务器的端口
       password: configService.get('REDIS_PASSWORD'),
+      db: 15,
     });
     this.subRedisClient = new Redis({
       host: configService.get('REDIS_HOST'), // Redis 服务器的主机名
       port: configService.get('REDIS_PORT'), // Redis 服务器的端口
       password: configService.get('REDIS_PASSWORD'),
+      db: 15,
     });
     if (!yn) {
       this.subscribe();
@@ -29,7 +31,7 @@ export class RedisService {
 
   subscribe() {
     this.subRedisClient.config('SET', 'notify-keyspace-events', 'Ex');
-    this.subRedisClient.subscribe('__keyevent@0__:expired');
+    this.subRedisClient.subscribe('__keyevent@15__:expired');
     this.subRedisClient.on('message', async (channel, message) => {
       const res: Object = await this.hGetAll(`${message}-copy`);
       console.log('键值过期了', message);
