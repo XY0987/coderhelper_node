@@ -59,9 +59,9 @@ export class RedisService {
     }
     await this.redisClient.hmset(key, hashkey, hashval);
     // 赋值值，用于过期是获取
-    await this.redisClient.hmset(`${key}-copy`, hashkey, hashval);
     // 设置过期时间
     if (timeNumber) {
+      await this.redisClient.hmset(`${key}-copy`, hashkey, hashval);
       await this.redisClient.expire(key, timeNumber);
     }
   }

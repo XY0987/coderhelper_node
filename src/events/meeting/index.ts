@@ -126,7 +126,7 @@ export class MeetingWs {
     });
 
     s.on('roomUserList', async (data) => {
-      // console.log("roomUserList msg",data)
+      console.log('roomUserList msg', data);
       s.emit('roomUserList', await this.getRoomOnlyUserList(data['roomId']));
     });
     s.on('call', (data) => {

@@ -25,7 +25,7 @@ export class EventsGateway {
   @SubscribeMessage('message')
   handleMessage(client: any, payload: any) {
     console.log(payload);
-    client.emit('message', 'hello workd');
+    // client.emit('message', 'hello workd');
   }
   @SubscribeMessage('connection')
   handleConnection(client: any) {
