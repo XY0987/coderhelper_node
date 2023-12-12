@@ -21,8 +21,10 @@ import { Interface } from './interface/interface.entity';
 import { Message } from './message/message.entity';
 import { Meeting } from './meeting/meeting.entity';
 import { MeetingUsers } from './meeting-users/meeting-users.entity';
+import { CodeTem } from './codeTem/codeTem.entity';
 import { AuthModule } from './auth/auth.module';
 import { RedisModule } from './redis/redis.module';
+import { CodeTemModule } from './codeTem/codeTem.module';
 import { EventsGateway } from './events/events.gateway';
 @Module({
   imports: [
@@ -51,6 +53,7 @@ import { EventsGateway } from './events/events.gateway';
             Message,
             Meeting,
             MeetingUsers,
+            CodeTem,
           ],
           // 同步本地的schema与数据库==>初始化的时候去使用
           synchronize: true,
@@ -70,6 +73,7 @@ import { EventsGateway } from './events/events.gateway';
     MessageModule,
     MeetingUsersModule,
     AuthModule,
+    CodeTemModule,
   ],
   controllers: [AppController],
   providers: [AppService, EventsGateway],
