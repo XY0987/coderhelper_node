@@ -10,14 +10,22 @@ export class CodeTemService {
     private readonly codeTemRepository: Repository<CodeTem>,
   ) {}
 
-  create(codeStr: string, codeType: string, codeUserId: number) {
-    const statement = `INSERT INTO code_tem ( codeStr, codeType, codeUserId )
+  create(
+    codeStr: string,
+    codeType: string,
+    codeUserId: number,
+    codeTheme: string,
+    codeDesc: string,
+  ) {
+    const statement = `INSERT INTO code_tem ( codeStr, codeType, codeUserId , codeTheme , codeDesc)
     VALUES
-        (?,?,?);`;
+        (?,?,?,?,?);`;
     return this.codeTemRepository.query(statement, [
       codeStr,
       codeType,
       codeUserId,
+      codeTheme,
+      codeDesc,
     ]);
   }
 
@@ -40,5 +48,38 @@ WHERE
     WHERE
         codeId =?;`;
     return this.codeTemRepository.query(statement, [codeId]);
+  }
+
+  getCodeTem(type: string) {
+    const statement = `SELECT
+    * 
+  FROM
+    code_tem 
+  WHERE
+    codeType =?;`;
+    return this.codeTemRepository.query(statement, [type]);
+  }
+
+  editCodeTem(
+    codeStr: string,
+    codeDesc: string,
+    codeTheme: string,
+    codeType: string,
+    codeId: number,
+  ) {
+    const statement = `UPDATE code_tem 
+    SET codeStr =?,
+    codeDesc =?,
+    codeTheme =?,
+    codeType =? 
+    WHERE
+      codeId =?;`;
+    return this.codeTemRepository.query(statement, [
+      codeStr,
+      codeDesc,
+      codeTheme,
+      codeType,
+      codeId,
+    ]);
   }
 }

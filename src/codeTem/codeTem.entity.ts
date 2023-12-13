@@ -17,4 +17,12 @@ export class CodeTem {
   // 提出人id
   @Column()
   codeUserId: number;
+
+  // 代码片段主题
+  @Column()
+  codeTheme: string;
+
+  // 代码片段描述
+  @Column()
+  codeDesc: string;
 }
