@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
-import { ProxyModule } from './Proxymiddle/Proxy.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ProjectModule } from './project/project.module';
@@ -74,7 +73,6 @@ import { EventsGateway } from './events/events.gateway';
     MessageModule,
     MeetingUsersModule,
     AuthModule,
-    ProxyModule,
     CodeTemModule,
   ],
   controllers: [AppController],
